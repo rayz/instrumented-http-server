@@ -11,7 +11,6 @@ import (
 
 type ToDoServer struct {
 	ToDoStore *ToDoStore
-	Count     int // total number of tasks (used as ID for individual task)
 }
 
 func NewServer() *ToDoServer {
@@ -21,9 +20,9 @@ func NewServer() *ToDoServer {
 }
 
 func (server *ToDoServer) GetToDos(w http.ResponseWriter, req *http.Request) {
-	for _, task := range server.ToDoStore.Tasks {
-		fmt.Fprintf(w, "ID: %d\nTask: %s\nCompleted: %t\n", task.ID, task.Description, task.Completed)
-	}
+	j, _ := json.Marshal(server.ToDoStore.Tasks)
+	fmt.Fprintf(w, string(j))
+
 }
 
 func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
