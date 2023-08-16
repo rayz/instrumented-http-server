@@ -47,3 +47,13 @@ func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request)
 	}
 	fmt.Fprintf(w, "Task id %d completed\n", target)
 }
+
+func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
+	target, err := strconv.Atoi(mux.Vars(req)["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	server.ToDoStore.DeleteTask(target)
+	fmt.Fprintf(w, "Task id %d deleted\n", target)
+}
