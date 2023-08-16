@@ -22,7 +22,6 @@ func NewServer() *ToDoServer {
 func (server *ToDoServer) GetToDos(w http.ResponseWriter, req *http.Request) {
 	j, _ := json.Marshal(server.ToDoStore.Tasks)
 	fmt.Fprintf(w, string(j))
-
 }
 
 func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
