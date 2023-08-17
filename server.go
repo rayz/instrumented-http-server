@@ -6,23 +6,26 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/gorilla/mux"
 )
 
 type ToDoServer struct {
 	ToDoStore *ToDoStore
+	Statsd    *statsd.Client
 }
 
-func NewServer() *ToDoServer {
+func NewServer(statsd *statsd.Client) *ToDoServer {
 	return &ToDoServer{
 		ToDoStore: NewToDoStore(),
+		Statsd:    statsd,
 	}
 }
 
 func (server *ToDoServer) GetToDos(w http.ResponseWriter, req *http.Request) {
 	j, _ := json.Marshal(server.ToDoStore.Tasks)
 	fmt.Fprintf(w, string(j))
-
+	server.Statsd.Incr("todo_get", nil, 1)
 }
 
 func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
@@ -33,6 +36,7 @@ func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	server.ToDoStore.Add(&task)
+	server.Statsd.Incr("todo_tasks", nil, 1)
 }
 
 func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request) {
@@ -46,6 +50,7 @@ func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request)
 		return
 	}
 	fmt.Fprintf(w, "Task id %d completed\n", target)
+	server.Statsd.Incr("todo_tasks_completed", nil, 1)
 }
 
 func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
@@ -56,4 +61,5 @@ func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
 	}
 	server.ToDoStore.DeleteTask(target)
 	fmt.Fprintf(w, "Task id %d deleted\n", target)
+	server.Statsd.Decr("todo_tasks", nil, 1)
 }
