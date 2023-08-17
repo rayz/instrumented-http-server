@@ -1,0 +1,2 @@
+{"float":1.1,"int":1,"level":"info","msg":"logging instrumented http server test","string":"foo","time":"2023-08-17T15:10:47-04:00"}
+{"float":1.1,"int":1,"level":"info","msg":"logging instrumented http server test","string":"foo","time":"2023-08-17T15:14:33-04:00"}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/gorilla/mux"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type ToDoServer struct {
@@ -26,6 +28,7 @@ func (server *ToDoServer) GetToDos(w http.ResponseWriter, req *http.Request) {
 	j, _ := json.Marshal(server.ToDoStore.Tasks)
 	fmt.Fprintf(w, string(j))
 	server.Statsd.Incr("todo_get", nil, 1)
+	log.WithFields(log.Fields{"total_tasks": len(server.ToDoStore.Tasks)}).Info("tasks retrieved")
 }
 
 func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
@@ -37,6 +40,7 @@ func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
 	}
 	server.ToDoStore.Add(&task)
 	server.Statsd.Incr("todo_tasks", nil, 1)
+	log.WithFields(log.Fields{"id": task.ID, "description": task.Description, "completed": task.Completed}).Info("task added")
 }
 
 func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request) {
@@ -51,6 +55,7 @@ func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request)
 	}
 	fmt.Fprintf(w, "Task id %d completed\n", target)
 	server.Statsd.Incr("todo_tasks_completed", nil, 1)
+	log.WithFields(log.Fields{"id": target}).Info("task completed")
 }
 
 func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
@@ -60,6 +65,6 @@ func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	server.ToDoStore.DeleteTask(target)
-	fmt.Fprintf(w, "Task id %d deleted\n", target)
+	log.WithFields(log.Fields{"id": target}).Info("task deleted")
 	server.Statsd.Decr("todo_tasks", nil, 1)
 }
