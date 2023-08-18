@@ -1,7 +1,7 @@
 package main
 
 type Task struct {
-	Description string
-	Completed   bool
-	ID          int
+	Description string `json:"description"`
+	Completed   bool   `json:"completed"`
+	ID          int    `json:"id"`
 }
