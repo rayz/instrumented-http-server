@@ -10,7 +10,7 @@ func TestAddToStore(t *testing.T) {
 	store := NewToDoStore()
 	for i := 1; i <= 10; i++ {
 		// each task gets id + 1 of previous task id
-		task := new(Task)
+		task := &Task{}
 		store.Add(task)
 		assert.Equal(t, task.ID, i, "task given unique id")
 
