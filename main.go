@@ -20,7 +20,7 @@ func main() {
 	// logs
 	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 	}
 	defer f.Close()
 
@@ -30,9 +30,9 @@ func main() {
 
 	// statsd
 	statsd, err := statsd.New("127.0.0.1:8125")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	// tracer
 	tracer.Start(
