@@ -38,7 +38,7 @@ func (server *ToDoServer) AddTask(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	server.ToDoStore.Add(&task)
+	server.ToDoStore.Add(req.Context(), &task)
 	server.Statsd.Count("todo_tasks_uncompleted.count", int64(server.ToDoStore.Uncompleted), []string{"environment:dev"}, 1)
 	log.WithFields(log.Fields{"id": task.ID, "description": task.Description, "completed": task.Completed}).Info("task added")
 }
@@ -49,7 +49,7 @@ func (server *ToDoServer) CompleteTask(w http.ResponseWriter, req *http.Request)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if !server.ToDoStore.CompleteTask(target) {
+	if !server.ToDoStore.CompleteTask(req.Context(), target) {
 		http.Error(w, "Task id not found", http.StatusBadRequest)
 		return
 	}
@@ -65,7 +65,7 @@ func (server *ToDoServer) DeleteTask(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	server.ToDoStore.DeleteTask(target)
+	server.ToDoStore.DeleteTask(req.Context(), target)
 	fmt.Fprintf(w, "Task id %d deleted\n", target)
 	server.Statsd.Count("todo_tasks_deleted.count", int64(server.ToDoStore.Deleted), []string{"environment:dev"}, 1)
 	log.WithFields(log.Fields{"id": target}).Info("task deleted")

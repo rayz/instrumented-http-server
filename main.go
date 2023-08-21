@@ -9,13 +9,15 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/gorilla/mux"
+	muxtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 var logFile = "/tmp/instrumentedhttpserver.log"
 
 func main() {
 
+	// logs
 	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		log.Fatal(err)
@@ -26,12 +28,21 @@ func main() {
 	log.SetOutput(f)
 	log.WithFields(log.Fields{"string": "foo", "int": 1, "float": 1.1}).Info("instrumented http server started...")
 
+	// statsd
 	statsd, err := statsd.New("127.0.0.1:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	r := mux.NewRouter()
+	// tracer
+	tracer.Start(
+		tracer.WithEnv("dev"),
+		tracer.WithService("instrumented-http-server"),
+		tracer.WithServiceVersion("1.0"),
+	)
+	defer tracer.Stop()
+
+	r := muxtrace.NewRouter()
 	todoserver := NewServer(statsd)
 	r.HandleFunc("/", todoserver.GetToDos).Methods("GET")
 	r.HandleFunc("/add", todoserver.AddTask).Methods("POST")

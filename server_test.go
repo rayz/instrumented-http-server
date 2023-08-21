@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -111,7 +112,7 @@ func setupServer(numTasks int) *ToDoServer {
 		task := &Task{
 			Description: fmt.Sprintf("fake_task%d", i),
 		}
-		server.ToDoStore.Add(task)
+		server.ToDoStore.Add(context.Background(), task)
 	}
 	return server
 }
