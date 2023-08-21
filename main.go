@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )

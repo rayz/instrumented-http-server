@@ -19,6 +19,7 @@ func NewServer(statsd *statsd.Client) *ToDoServer {
 	return &ToDoServer{
 		ToDoStore: NewToDoStore(),
 		Statsd:    statsd,
+	}
 }
 
 func (server *ToDoServer) GetToDos(w http.ResponseWriter, req *http.Request) {
