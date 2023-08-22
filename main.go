@@ -20,7 +20,7 @@ func main() {
 	// logs
 	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
-		// log.Fatal(err)
+		log.Panic(err)
 	}
 	defer f.Close()
 
@@ -30,15 +30,15 @@ func main() {
 
 	// statsd
 	statsd, err := statsd.New("127.0.0.1:8125")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err != nil {
+		log.Panic(err)
+	}
 
 	// tracer
 	tracer.Start(
 		tracer.WithEnv("dev"),
 		tracer.WithService("instrumented-http-server"),
-		tracer.WithServiceVersion("1.0"),
+		tracer.WithServiceVersion("v1.0"),
 	)
 	defer tracer.Stop()
 
