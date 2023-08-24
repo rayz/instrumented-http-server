@@ -13,3 +13,6 @@ datadog:
   logs:
     enabled: true
     containerCollectAll: true
+  
+  kubelet:
+    tlsVerify: false
