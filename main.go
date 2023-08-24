@@ -13,23 +13,14 @@ import (
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
-var logFile = "/tmp/instrumentedhttpserver.log"
-
 func main() {
 
-	// logs
-	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer f.Close()
-
 	log.SetFormatter(&log.JSONFormatter{})
-	log.SetOutput(f)
+	log.SetOutput(os.Stdout)
 	log.WithFields(log.Fields{"string": "foo", "int": 1, "float": 1.1}).Info("instrumented http server started...")
 
 	// statsd
-	statsd, err := statsd.New("127.0.0.1:8125")
+	statsd, err := statsd.New("")
 	if err != nil {
 		log.Panic(err)
 	}

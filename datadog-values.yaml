@@ -1,0 +1,15 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  site: datadoghq.com
+  dogstatsd:
+    useSocketVolume: false
+    useHostPort: true
+    nonLocalTraffic: true
+  apm:
+    enabled: true
+    hostPortConfig:
+      enabled: true
+  logs:
+    enabled: true
+    containerCollectAll: true
