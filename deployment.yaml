@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: instrumentedhttpserver
+  labels:
+    run: instrumentedhttpserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: instrumentedhttpserver
+  template:
+    metadata:
+      labels:
+        app: instrumentedhttpserver
+    spec:
+      containers:
+        - name: server
+          image: server
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+      hostNetwork: true  
