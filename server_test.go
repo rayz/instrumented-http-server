@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,7 +15,7 @@ import (
 )
 
 func TestAddHandler(t *testing.T) {
-	server := NewServer()
+	server := NewServer(nil)
 	tt := []struct {
 		name       string
 		data       map[string]string
@@ -106,12 +107,12 @@ func TestDeleteHandler(t *testing.T) {
 
 // helper function to create new server populated with numTasks
 func setupServer(numTasks int) *ToDoServer {
-	server := NewServer()
+	server := NewServer(nil)
 	for i := 1; i <= numTasks; i++ {
 		task := &Task{
 			Description: fmt.Sprintf("fake_task%d", i),
 		}
-		server.ToDoStore.Add(task)
+		server.ToDoStore.Add(context.Background(), task)
 	}
 	return server
 }
